@@ -1,0 +1,5 @@
+# Project exclude paths
+/out/
+/Record.wav
+/CommandLineAudioRecorder.iml
+/.idea/
