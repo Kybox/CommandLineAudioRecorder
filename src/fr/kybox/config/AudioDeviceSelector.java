@@ -1,4 +1,6 @@
-package fr.kybox;
+package fr.kybox.config;
+
+import fr.kybox.utils.UserInput;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Line;
@@ -6,8 +8,10 @@ import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
+/**
+ * Author : yann@kybox.fr
+ **/
 public class AudioDeviceSelector {
 
     private final List<Mixer> supportedMixerList = new ArrayList<>();
@@ -20,23 +24,23 @@ public class AudioDeviceSelector {
         int deviceNb = 0;
 
         System.out.println("-----------------------------");
-        System.out.println("SUPPORTED AUDIO DEVICE LIST :");
+        System.out.println("AUDIO DEVICE SUPPORTED LIST :");
         System.out.println("-----------------------------");
 
-        for(Mixer.Info mixerInfo : mixerInfoList){
+        for (Mixer.Info mixerInfo : mixerInfoList) {
 
             Mixer mixer = AudioSystem.getMixer(mixerInfo);
 
             if (mixer.isLineSupported(targetDataLineInfo)) {
 
-                deviceNb ++;
+                deviceNb++;
                 this.supportedMixerList.add(mixer);
                 System.out.println("[" + deviceNb + "] -> " + mixer.getMixerInfo().getName());
                 System.out.println("       Description : " + mixer.getMixerInfo().getDescription() + "\n");
             }
         }
 
-        if(deviceNb == 0) {
+        if (deviceNb == 0) {
             System.out.println("NO AUDIO DEVICE SUPPORTED");
             System.exit(0);
         }
@@ -45,8 +49,7 @@ public class AudioDeviceSelector {
     public Mixer selectDevice() {
 
         System.out.println("Pick a number");
-        Scanner scanner = new Scanner(System.in);
-        Mixer selectedMixer = this.supportedMixerList.get(scanner.nextInt() - 1);
+        Mixer selectedMixer = this.supportedMixerList.get(UserInput.getInt() - 1);
 
         System.out.println("\nSelected audio capture device : " + selectedMixer.getMixerInfo().getName());
 

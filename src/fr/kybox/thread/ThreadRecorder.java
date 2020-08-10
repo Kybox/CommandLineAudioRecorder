@@ -1,4 +1,6 @@
-package fr.kybox;
+package fr.kybox.thread;
+
+import fr.kybox.utils.UserInput;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -7,6 +9,9 @@ import javax.sound.sampled.TargetDataLine;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
+/**
+ * Author : yann@kybox.fr
+ **/
 public class ThreadRecorder extends Thread {
 
     private final String CAPTURE = "c";
@@ -19,8 +24,7 @@ public class ThreadRecorder extends Thread {
     private AudioInputStream audioInputStream;
     private ByteArrayOutputStream byteArrayOutputStream;
 
-    public ThreadRecorder(File file, AudioInputStream audioInputStream) {
-        this.file = file;
+    public ThreadRecorder(AudioInputStream audioInputStream) {
         this.threadType = SAVE;
         this.audioInputStream = audioInputStream;
     }
@@ -42,10 +46,9 @@ public class ThreadRecorder extends Thread {
 
                 try {
 
-                    System.out.println("Capture...");
                     System.out.println("Press 'Enter' to stop and save the file");
 
-                    while (!stopCapture) {
+                    while (!this.stopCapture) {
                         int cnt = targetDataLine.read(tempBuffer, 0, tempBuffer.length);
                         if (cnt > 0) this.byteArrayOutputStream.write(tempBuffer, 0, cnt);
                         System.out.print("\r" + this.targetDataLine.getMicrosecondPosition() + " ms");
@@ -62,18 +65,21 @@ public class ThreadRecorder extends Thread {
 
             case SAVE:
 
+                System.out.println("\rPlease, enter a filename :");
+                String filename = UserInput.getLine() + ".wav";
+
                 System.out.println("\r  |_ Start saving");
 
                 try {
                     if (AudioSystem.isFileTypeSupported(AudioFileFormat.Type.WAVE, this.audioInputStream))
-                        AudioSystem.write(this.audioInputStream, AudioFileFormat.Type.WAVE, file);
+                        AudioSystem.write(this.audioInputStream, AudioFileFormat.Type.WAVE, new File(filename));
 
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.exit(0);
                 }
 
-                System.out.println("  |_ File saved : " + file.getName());
+                System.out.println("  |_ File saved : " + filename);
 
                 break;
         }
